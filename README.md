@@ -5,7 +5,7 @@
 
 Spark Streaming项目架构：
 
-![](https://github.com/vidots/CloudComputing-Homework/blob/main/code/show-images/bar.png)
+![](https://github.com/vidots/CloudComputing-Homework/blob/main/code/show-images/arch.png)
 
 
 
@@ -14,8 +14,6 @@ Spark Streaming项目架构：
 
 
 ![](https://github.com/vidots/CloudComputing-Homework/blob/main/code/show-images/bar.png)
-
-![](https://github.com/vidots/CloudComputing-Homework/blob/main/code/show-images/arch.png)
 
 
 
