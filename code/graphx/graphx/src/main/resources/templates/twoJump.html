@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="col-sm-offset-2 col-sm-8">
+    <table class="table">
+        <caption class="text-center">二跳邻居列表</caption>
+        <thead>
+        <tr>
+            <th>法老</th>
+            <th>老番茄</th>
+        </tr>
+        </thead>
+        <tbody id="tt">
+        <tr>
+            <td>Tanmay</td>
+            <td>Bangalore</td>
+        </tr>
+        <tr>
+            <td>Sachin</td>
+            <td>Mumbai</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    var potato = []
+    var old = []
+    $.getJSON('/data/potato.json', function (data) {
+        for (var x = 0; x < 15; x++) {
+            potato[x] = data[x]
+        }
+        $.getJSON('/data/pa.json', function (data) {
+            for (var x = 0; x < 15; x++) {
+                old[x] = data[x]
+            }
+            var str = ""
+            for (var x = 0; x < 15; x++) {
+                str += "<tr>"
+                str += "<td>"
+                str += old[x]
+                str += "</td>"
+                str += "<td>"
+                str += potato[x]
+                str += "</td>"
+                str += "</tr>"
+            }
+            document.getElementById("tt").innerHTML = str
+        })
+
+    })
+
+
+
+</script>
+
+</body>
+</html>

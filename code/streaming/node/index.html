@@ -1,0 +1,176 @@
+<style>
+    .btn {
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+
+        margin: 2px 0;
+
+        border: solid 1px transparent;
+        border-radius: 4px;
+
+        padding: 0.5em 1em;
+
+        color: #ffffff;
+        background-color: #9555af;
+    }
+</style>
+<div id="control" hidden><button class="btn" onclick="startLaunch();">Launch</button></div>
+<div id='container' hidden style="height:600px;width:100%;margin: 0px auto;"></div>
+<div id='wcontainer' hidden style="height:600px;width:50%;margin: 0px auto;"></div>
+<script src="/jquery.min.js"></script>
+<script src="/highcharts.js"></script>
+<script src="/exporting.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/wordcloud2.js"></script>
+<script type="text/javascript">
+
+    function launch() {
+        console.log('index page ....')
+        // 绘图代码
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: '单月占据涨幅前十的股票'
+            },
+            subtitle: {
+                text: '数据来源：aigaogao.com'
+            },
+            xAxis: {
+                categories: [],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '单月涨幅',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                valueSuffix: '%'
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: true // 允许数据标签重叠
+                    }
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -40,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            },
+            series: [{
+                name: '',
+                data: []
+            }]
+        });
+        var currMonth_total = '';
+        var currMonth_trend = '';
+        // 按照接收到的顺序来存储数据
+        var totalData = []
+        var trendData = []
+        var socket = io();
+        var wcDict = {}
+        socket.on('total', function (data) {
+            // var stocksLen = totalData.length
+            if (data['name'] in wcDict) {
+                wcDict[data['name']] += data['total']
+            } else {
+                wcDict[data['name']] = data['total']
+            }
+
+
+            // 如何处理当前来的数据：1.直接加入数据；2.清除数据，再加入
+            // if (stocksLen === 0) {
+            //     // 如果数据为空，直接插进去
+            //     totalData.push(data)
+            // } else {
+            //     // 否则需要进行判断：
+            //     var lastInStockData = totalData[stocksLen - 1]
+            //     //判断最新的数据是否与已存在的数据在相同月份
+            //     if (lastInStockData['month'] === data['month']) {
+            //         totalData.push(data)
+            //     } else {
+            //         totalData = [data]
+            //     }
+
+
+            // }
+            // 处理完数据，需要对数据进行排序
+            var arr = [];
+            var keys = Object.keys(wcDict);
+            for (var i = 0; i < keys.length; i++) {
+                arr.push({ "name": keys[i], "total": wcDict[keys[i]] })
+            }
+            var sortedData = arr.sort(function (left, right) {
+                return left["total"] - right["total"]
+            })
+            var cloudData = sortedData.map(item => [item['name'], item['total']])
+            console.log(cloudData)
+            // var title = sortedData[0]["month"]
+            WordCloud(document.getElementById("wcontainer"), {
+                list: cloudData,
+                "maxFontSize": 60, //最大字号
+                "minFontSize": 14, //最小字号
+                "fontWeight": 'normal', //字体粗细
+            })
+        });
+        socket.on('trend', function (data) {
+            var stocksLen = trendData.length
+            // 如何处理当前来的数据：1.直接加入数据；2.清除数据，再加入
+            if (stocksLen === 0) {
+                // 如果数据为空，直接插进去
+                trendData.push(data)
+            } else {
+                // 否则需要进行判断：
+                var lastInStockData = trendData[stocksLen - 1]
+                // 判断最新的数据是否与已存在的数据在相同月份
+                if (lastInStockData['month'] === data['month']) {
+                    trendData.push(data)
+                } else {
+                    trendData = [data]
+                }
+            }
+            // 处理完数据，需要对数据进行排序
+            var sortedData = trendData.sort(function (left, right) {
+                return left["trend"] - right["trend"]
+            })
+            var resultData = sortedData.map(item => parseFloat(item["trend"]))
+            var categoriesData = sortedData.map(item => item["name"])
+            var title = sortedData[0]["month"]
+            chart.series[0].setData(resultData)
+            chart.setTitle({ text: title + "总涨幅排名前十的股票" })
+            chart.xAxis[0].setCategories(categoriesData)
+        });
+
+    };
+
+
+    $(document).ready(function () {
+        document.getElementById("control").removeAttribute("hidden")
+    })
+    function startLaunch() {
+        document.getElementById("control").hidden = "true"
+        document.getElementById("container").removeAttribute("hidden")
+        document.getElementById("wcontainer").removeAttribute("hidden")
+        launch()
+    }
+
+</script>

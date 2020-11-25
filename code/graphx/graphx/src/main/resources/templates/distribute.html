@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="js/echarts.min.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/dataTool.min.js"></script>
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="position:relative;left:200px;top:100px;width:800px;height:600px"></div>
+
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+
+    //散点图
+    $.getJSON('/data/coopAndNeighbour.json', function (data) {
+        var option = {
+            title: {
+                text: '关于合作的UP主数量和总合作视频数的散点图',
+                left: 'center',
+                top: 0
+            },
+            tooltip: {
+                trigger: 'item',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            xAxis: [{
+                type: 'value'
+            }],
+            yAxis: [{
+                type: 'value'
+            }],
+            series: [{
+                name: '合作视频数量',
+                type: 'scatter',
+                symbolSize: 5,
+                // itemStyle: {
+                //     normal: {
+                //         borderWidth: 0.2,
+                //         borderColor: '#fff'
+                //     }
+                // },
+                data: data
+            }]
+        };
+        myChart.setOption(option);
+    });
+
+</script>
+</body>
+</html>

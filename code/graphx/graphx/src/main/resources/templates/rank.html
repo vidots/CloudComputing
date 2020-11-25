@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="js/echarts.min.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/dataTool.min.js"></script>
+</head>
+<body style="height: 100%; margin: 0">
+<div class="container">
+    <div class="row">
+        <div id="container1" style="position:relative;left:50px;top:60px;width:700px;height:500px"></div>
+
+        <div id="container2" style="position:relative;left:50px;top:60px;width:700px;height:500px"></div>
+
+        <div id="container3" style="position:relative;left:50px;top:60px;width:700px;height:500px"></div>
+
+        <div id="container4" style="position:relative;left:50px;top:60px;width:700px;height:500px"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var dom1 = document.getElementById("container1");
+    var myChart1 = echarts.init(dom1);
+    var app1 = {};
+    option1 = null;
+
+    var dom2 = document.getElementById("container2");
+    var myChart2 = echarts.init(dom2);
+    var app2 = {};
+    option2 = null;
+
+
+    var dom3 = document.getElementById("container3");
+    var myChart3 = echarts.init(dom3);
+    var app3 = {};
+    option3 = null;
+
+    var dom4 = document.getElementById("container4");
+    var myChart4 = echarts.init(dom4);
+    var app4 = {};
+    option4 = null;
+
+    //邻居排行
+    $.getJSON('/data/neighbour.json', function (data) {
+        var name = []
+        var num = []
+        for (var x = 0; x < 20; x++) {
+            name[x] = data[x][0]
+            num[x] = data[x][1]
+        }
+        option1 = {
+            title: {
+                text: '邻居顶点数排行',
+                left: 'center',
+                top: 0
+            },
+            xAxis: {
+                type: 'category',
+                data: name,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: num,
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(220, 220, 220, 0.8)'
+                }
+            }]
+        };
+        myChart1.setOption(option1);
+    })
+
+    //pageRank
+    $.getJSON('/data/pagerank.json', function (data) {
+        var name = []
+        var num = []
+        for (var x = 0; x < 20; x++) {
+            name[x] = data[x][0]
+            num[x] = data[x][1]
+        }
+        option2 = {
+            title: {
+                text: 'pageRank排行',
+                left: 'center',
+                top: 0
+            },
+            xAxis: {
+                type: 'category',
+                data: name,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: num,
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(220, 220, 220, 0.8)'
+                }
+            }]
+        };
+        myChart3.setOption(option2);
+    })
+
+    //三角环
+    $.getJSON('/data/triangle.json', function (data) {
+        var name = []
+        var num = []
+        for (var x = 0; x < 20; x++) {
+            name[x] = data[x][0]
+            num[x] = data[x][1]
+        }
+        option3 = {
+            title: {
+                text: '三角环统计排行',
+                left: 'center',
+                top: 0
+            },
+            xAxis: {
+                type: 'category',
+                data: name,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: num,
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(220, 220, 220, 0.8)'
+                }
+            }]
+        };
+        myChart4.setOption(option3);
+    })
+
+    //合作视频数排行
+    $.getJSON('/data/coop.json', function (data) {
+        var name = []
+        var num = []
+        for (var x = 0; x < 20; x++) {
+            name[x] = data[x][0]
+            num[x] = data[x][1]
+        }
+        option4 = {
+            title: {
+                text: '合作视频数排行',
+                left: 'center',
+                top: 0
+            },
+            xAxis: {
+                type: 'category',
+                data: name,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: num,
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(220, 220, 220, 0.8)'
+                }
+            }]
+        };
+        myChart2.setOption(option4);
+    })
+
+</script>
+</body>
+</html>
